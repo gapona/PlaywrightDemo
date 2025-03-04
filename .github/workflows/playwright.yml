@@ -28,7 +28,7 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run Playwright tests
-        run: npx playwright test || true  # Allow failures
+        run: npx playwright test || true  # Allow failures to generate reports
 
       - name: Install Allure CLI
         run: npm install -g allure-commandline  # Ensure Allure is installed
@@ -36,12 +36,12 @@ jobs:
       - name: Generate Allure Report
         run: allure generate allure-results -o allure-report --clean
 
-      - name: Serve Allure Report in GitHub Actions
-        run: |
-          npx http-server allure-report -p 8080 &
-          sleep 5
-        continue-on-error: true  # Ensure workflow doesn't stop
+      - name: Deploy Allure Report to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: allure-report
 
-      - name: Expose Report URL
+      - name: Print Allure Report URL
         run: |
-          echo "🔗 View Allure Report: http://localhost:8080"
+          echo "🔗 Allure Report available at: https://github.com/gapona/PrimeWInDemo/allure-report/index.html"
