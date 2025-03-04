@@ -1,0 +1,4 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","18246","User can log in and see Deposit button","webkit","Tue Mar 04 23:53:55 UTC 2025","passed","Tue Mar 04 23:54:13 UTC 2025","","Login.test.ts","",""
+"","11803","User can log in and see Deposit button","firefox","Tue Mar 04 23:53:41 UTC 2025","passed","Tue Mar 04 23:53:52 UTC 2025","","Login.test.ts","",""
+"","14717","User can log in and see Deposit button","chromium","Tue Mar 04 23:53:41 UTC 2025","passed","Tue Mar 04 23:53:55 UTC 2025","","Login.test.ts","",""
