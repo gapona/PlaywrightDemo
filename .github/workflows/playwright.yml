@@ -39,9 +39,6 @@ jobs:
       - name: Deploy Allure Report to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          branch: gh-pages
+          branch: main
           folder: allure-report
-
-      - name: Print Allure Report URL
-        run: |
-          echo "🔗 Allure Report available at: https://github.com/gapona/PrimeWInDemo/allure-report/index.html"
+          target-folder: docs
