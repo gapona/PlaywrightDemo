@@ -30,6 +30,7 @@ export default defineConfig({
     headless: process.env.CI ? true : false, //  Headless only in CI
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
+    screenshot: 'only-on-failure', // Takes screenshot only when a test fails
   },
 
   /* Configure projects for major browsers */

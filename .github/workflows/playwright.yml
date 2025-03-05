@@ -42,3 +42,11 @@ jobs:
           branch: main
           folder: allure-report
           target-folder: docs
+
+      - name: Upload Playwright Screenshots
+        if: always()  # Upload even if tests fail
+        uses: actions/upload-artifact@v4
+        with:
+          name: Playwright Screenshots
+          path: screenshots/
+
