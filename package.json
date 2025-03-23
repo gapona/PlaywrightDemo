@@ -2,7 +2,13 @@
   "name": "primewindemo",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test:desktop": "npx playwright test --project=chromium --project=firefox --project=webkit",
+    "test:mobile": "npx playwright test --project=\"iPhone 14 - Safari\" --project=\"Samsung Galaxy S9+ - Firefox\" --project=\"Pixel 7 - Chromium\" --project=\"OnePlus 9 - Edge\"",
+    "test:all": "npx playwright test",
+    "allure:generate": "allure generate allure-results --clean -o allure-report",
+    "allure:open": "allure open allure-report"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
