@@ -1,9 +1,10 @@
-import {defineConfig, devices} from '@playwright/test';
+import {defineConfig} from '@playwright/test';
+import {desktopProjects} from './configs/desktop.config';
+import {mobileProjects} from './configs/mobile.config';
 
 export default defineConfig({
     testDir: './tests',
-    fullyParallel: true,  // Run tests in files in parallel
-    forbidOnly: !!process.env.CI, //Fail the build on CI if you accidentally left test.only in the source code.
+    fullyParallel: true,
     retries: process.env.CI ? 2 : 0, // Retry on CI only
     workers: process.env.CI ? 2 : undefined,// Opt out of parallel tests on CI.
     reporter: [['allure-playwright']], // Use Allure for reporting
@@ -13,48 +14,9 @@ export default defineConfig({
         trace: 'on-first-retry',    // Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer
         screenshot: 'only-on-failure', // Takes screenshot only when a test fails
     },
-
-    /* Configure projects for major browsers */
     projects: [
-        {
-            name: 'chromium',
-            use: {...devices['Desktop Chrome']},
-        },
-
-        {
-            name: 'firefox',
-            use: {...devices['Desktop Firefox']},
-        },
-
-        {
-            name: 'webkit',
-            use: {...devices['Desktop Safari']},
-        },
-
-        /* Test against mobile viewports. */
-        // {
-        //   name: 'Mobile Chrome',
-        //   use: { ...devices['Pixel 5'] },
-        // },
-        // {
-        //   name: 'Mobile Safari',
-        //   use: {
-        //     ...devices['iPhone 12'],
-        //     isMobile: true,  // ✅ Ensure mobile emulation
-        //     hasTouch: true,  // ✅ Enable touch events
-        //     viewport: {width: 390, height: 844},  // ✅ Explicit viewport
-        //   },
-        // }
-
-        /* Test against branded browsers. */
-        // {
-        //   name: 'Microsoft Edge',
-        //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-        // },
-        // {
-        //   name: 'Google Chrome',
-        //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-        // },
+        ...desktopProjects,
+        ...mobileProjects,
     ],
 
     /* Run your local dev server before starting the tests */
