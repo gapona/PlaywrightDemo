@@ -12,6 +12,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -22,31 +23,22 @@ jobs:
           node-version: 18
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
       - name: Run Playwright tests
-        run: npx playwright test || true  # Allow failures to generate reports
+        run: npx playwright test || true
 
       - name: Install Allure CLI
-        run: npm install -g allure-commandline  # Ensure Allure is installed
+        run: npm install -g allure-commandline
 
-      - name: Generate Allure Report
+      - name: Generate Allure report
         run: allure generate allure-results -o allure-report --clean
 
-      - name: Deploy Allure Report to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4
+      - name: Deploy Allure report to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          branch: main
-          folder: allure-report
-          target-folder: docs
-
-      - name: Upload Playwright Screenshots
-        if: always()  # Upload even if tests fail
-        uses: actions/upload-artifact@v4
-        with:
-          name: Playwright Screenshots
-          path: screenshots/
-
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./allure-report
