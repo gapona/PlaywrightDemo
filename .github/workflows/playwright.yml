@@ -44,5 +44,5 @@ jobs:
           publish_dir: ./allure-report
           destination_dir: allure-report
       - name: Print Report Link
-        run:
-        echo "🔗 View Allure Report at: https://gapona.github.io/PlaywrightDemo/allure-report/"
+        run: |
+          echo "📎 View Allure Report at: https://gapona.github.io/PlaywrightDemo/allure-report/"
