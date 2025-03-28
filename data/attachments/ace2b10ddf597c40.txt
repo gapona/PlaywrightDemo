@@ -1,9 +1,0 @@
-Create status: 200
-Created pet: {
-  id: 1743202624298,
-  category: { id: 0, name: 'dog' },
-  name: 'TestPet',
-  photoUrls: [],
-  tags: [],
-  status: 'available'
-}

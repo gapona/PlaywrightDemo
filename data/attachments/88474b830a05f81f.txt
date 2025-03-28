@@ -1,0 +1,1 @@
+GET /pet/1 status: 404
