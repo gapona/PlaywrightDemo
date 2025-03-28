@@ -1,0 +1,10 @@
+GET /pet/1 responded in 73ms
+Full pet object: {
+  id: 1,
+  category: { id: 1, name: 'cat' },
+  name: 'dog',
+  photoUrls: [],
+  tags: [],
+  status: 'sold'
+}
+Pet status: sold
