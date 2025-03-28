@@ -42,7 +42,6 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./allure-report
-          destination_dir: allure-report
       - name: Print Report Link
         run: |
-          echo "📎 View Allure Report at: https://gapona.github.io/PlaywrightDemo/allure-report/"
+          echo "📎 View Allure Report at: https://gapona.github.io/PlaywrightDemo/"
