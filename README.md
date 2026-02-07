@@ -43,6 +43,7 @@ The framework covers both happy paths and edge cases, including:
 
 | Command           | Description                                             |
 |-------------------|---------------------------------------------------------|
+| `npm install` | Install project dependencies          |
 | `test:desktop` | Run tests on all **Desktop browsers** (Chrome)          |
 | `report:open`     | Open Playwright HTML report based on latest test results|
 
