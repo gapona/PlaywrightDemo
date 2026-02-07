@@ -1,4 +1,0 @@
-Create status: 200
-Initial delete status: 404
-Got 404, retrying after 5s...
-Second delete status: 404

@@ -1,9 +1,0 @@
-GET /pet/1 status: 200
-Full pet object: {
-  id: 1,
-  category: { id: 10, name: 'dog' },
-  name: 'Updated Doggie',
-  photoUrls: [ 'https://example.com/photo.jpg' ],
-  tags: [ { id: 101, name: 'cute' } ],
-  status: 'available'
-}
