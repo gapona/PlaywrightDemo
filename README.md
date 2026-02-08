@@ -16,14 +16,16 @@ approach to API test automation using Playwright Test.
 
 ## Project Structure
 
+```text
 tests/
-├── api/
-│   ├── config     # API configuration and endpoints
-│   ├── helpers    # API client and request helpers
-│   ├── models     # Data models and typings
-│   ├── services   # Service-layer abstractions
-│   ├── specs      # Test specifications
-│   └── utils      # Shared utilities
+└── api/
+    ├── config/      # API configuration and endpoints
+    ├── helpers/     # API client and request helpers
+    ├── models/      # Data models and typings
+    ├── services/    # Service-layer abstractions
+    ├── specs/       # Test specifications
+    └── utils/       # Shared utilities
+```
 
 ## API Coverage
 
