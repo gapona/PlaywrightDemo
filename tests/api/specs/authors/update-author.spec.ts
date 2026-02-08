@@ -5,76 +5,57 @@ import { AssertionHelper } from '../../helpers/assertion';
 
 test.describe('PUT /api/v1/Authors/{id}', () => {
     let authorService: AuthorService;
+    const EXISTING_AUTHOR_ID = 5;
 
     test.beforeEach(async ({ request }) => {
         authorService = new AuthorService(request);
     });
 
-    test('updates existing author', async () => {
-        const authorId = 5;
-        const payload = TestDataGenerator.generateUpdateAuthorData(authorId);
+    test('updates existing author with valid payload', async () => {
+        const payload =
+            TestDataGenerator.generateUpdateAuthorData(EXISTING_AUTHOR_ID);
 
-        const { response, data } = await authorService.updateAuthor(authorId, payload);
+        const { response, data } =
+            await authorService.updateAuthor(EXISTING_AUTHOR_ID, payload);
 
         await AssertionHelper.assertStatusCode(response, 200);
         await AssertionHelper.assertContentType(response, 'application/json');
 
         AssertionHelper.assertAuthorStructure(data!);
-        expect(data!.id).toBe(authorId);
+        expect(data!.id).toBe(EXISTING_AUTHOR_ID);
     });
 
-    test('updates first and last name', async () => {
-        const authorId = 5;
-        const payload = TestDataGenerator.generateUpdateAuthorData(authorId, {
+    test('updates author fields', async () => {
+        const payload = {
+            id: EXISTING_AUTHOR_ID,
+            idBook: 10,
             firstName: 'UpdatedFirstName',
             lastName: 'UpdatedLastName',
-        });
-
-        const { data } = await authorService.updateAuthor(authorId, payload);
-
-        expect(data!.firstName).toBe('UpdatedFirstName');
-        expect(data!.lastName).toBe('UpdatedLastName');
-    });
-
-    test('updates book association', async () => {
-        const authorId = 5;
-        const payload = TestDataGenerator.generateUpdateAuthorData(authorId, {
-            idBook: 10,
-        });
-
-        const { data } = await authorService.updateAuthor(authorId, payload);
-
-        expect(data!.idBook).toBe(10);
-    });
-
-    test('preserves author id', async () => {
-        const authorId = 5;
-        const payload = TestDataGenerator.generateUpdateAuthorData(authorId);
-
-        const { data } = await authorService.updateAuthor(authorId, payload);
-
-        expect(data!.id).toBe(authorId);
-    });
-
-    test('updates all author fields', async () => {
-        const authorId = 5;
-        const payload = {
-            id: authorId,
-            idBook: 20,
-            firstName: 'CompletelyNew',
-            lastName: 'FullyUpdated',
         };
 
-        const { data } = await authorService.updateAuthor(authorId, payload);
+        const { data } =
+            await authorService.updateAuthor(EXISTING_AUTHOR_ID, payload);
 
         AssertionHelper.assertAuthorData(data!, payload);
     });
 
+    test('preserves author id on update', async () => {
+        const payload =
+            TestDataGenerator.generateUpdateAuthorData(EXISTING_AUTHOR_ID);
+
+        const { data } =
+            await authorService.updateAuthor(EXISTING_AUTHOR_ID, payload);
+
+        expect(data!.id).toBe(EXISTING_AUTHOR_ID);
+    });
+
     test('handles non-existent author id', async () => {
         const nonExistentId = 99999;
-        const payload = TestDataGenerator.generateUpdateAuthorData(nonExistentId);
+        const payload =
+            TestDataGenerator.generateUpdateAuthorData(nonExistentId);
 
-        const { response } = await authorService.updateAuthor(nonExistentId, payload);
+        const { response } =
+            await authorService.updateAuthor(nonExistentId, payload);
 
         expect([200, 404]).toContain(response.status());
     });

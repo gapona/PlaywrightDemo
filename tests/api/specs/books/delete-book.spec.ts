@@ -4,63 +4,54 @@ import { AssertionHelper } from '../../helpers/assertion';
 
 test.describe('DELETE /api/v1/Books/{id}', () => {
     let bookService: BookService;
+    const EXISTING_BOOK_ID = 1;
+    const NON_EXISTENT_BOOK_ID = 99999;
 
     test.beforeEach(async ({ request }) => {
         bookService = new BookService(request);
     });
 
-    test('deletes existing book', async () => {
-        const bookId = 1;
-
-        const { response } = await bookService.deleteBook(bookId);
+    test('successfully deletes existing book', async () => {
+        const { response } =
+            await bookService.deleteBook(EXISTING_BOOK_ID);
 
         await AssertionHelper.assertStatusCode(response, 200);
-    });
-
-    test('returns successful response on delete', async () => {
-        const bookId = 1;
-
-        const { response } = await bookService.deleteBook(bookId);
-
         expect(response.ok()).toBeTruthy();
-    });
-
-    test('handles non-existent book id', async () => {
-        const nonExistentId = 99999;
-
-        const { response } = await bookService.deleteBook(nonExistentId);
-
-        expect([200, 404]).toContain(response.status());
-    });
-
-    test('returns content-length header', async () => {
-        const bookId = 1;
-
-        const { response } = await bookService.deleteBook(bookId);
-
         expect(response.headers()).toHaveProperty('content-length');
     });
 
     test('allows delete followed by get request', async () => {
-        const bookId = 1;
+        const { response: deleteResponse } =
+            await bookService.deleteBook(EXISTING_BOOK_ID);
 
-        const { response: deleteResponse } = await bookService.deleteBook(bookId);
         await AssertionHelper.assertStatusCode(deleteResponse, 200);
 
-        const { response: getResponse } = await bookService.getBookById(bookId);
+        const { response: getResponse } =
+            await bookService.getBookById(EXISTING_BOOK_ID);
 
-        expect(getResponse.status()).toBeDefined();
+        expect([200, 404]).toContain(getResponse.status());
     });
 
-    test('handles zero book id', async () => {
-        const { response } = await bookService.deleteBook(0);
+    test('handles non-existent book id', async () => {
+        const { response } =
+            await bookService.deleteBook(NON_EXISTENT_BOOK_ID);
 
-        expect([200, 400, 404]).toContain(response.status());
+        expect([200, 404]).toContain(response.status());
     });
 
-    test('handles negative book id', async () => {
-        const { response } = await bookService.deleteBook(-1);
+    test.describe('invalid id values', () => {
+        const cases = [
+            { id: 0, description: 'zero id' },
+            { id: -1, description: 'negative id' },
+        ];
 
-        expect([200, 400, 404]).toContain(response.status());
+        for (const { id, description } of cases) {
+            test(`handles ${description}`, async () => {
+                const { response } =
+                    await bookService.deleteBook(id);
+
+                expect([200, 400, 404]).toContain(response.status());
+            });
+        }
     });
 });

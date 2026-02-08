@@ -1,5 +1,7 @@
 # Playwright Test Framework Online Bookstore
 
+[![Playwright Tests](https://github.com/gapona/PlaywrightDemo/actions/workflows/playwright.yml/badge.svg)](https://github.com/gapona/PlaywrightDemo/actions)
+
 ## Project Overview
 
 This project is an API automation test framework for the FakeRest Online Bookstore API.
@@ -58,15 +60,17 @@ The framework covers both happy paths and edge cases, including:
 |-------------------|---------------------------------------------------------|
 | `npm install` | Install project dependencies          |
 | `test:desktop` | Run tests on all **Desktop browsers** (Chrome)          |
-| `report:open`     | Open Playwright HTML report based on latest test results|
+| `report:open`  | Open Playwright HTML report based on latest test results|
 
 ## Reporting
 The project uses the built-in Playwright HTML Reporter.
-The report is generated automatically after test execution and provides
-a clear overview of passed and failed test cases.
 
-In CI, the report is uploaded as a GitHub Actions artifact and can be
-downloaded directly from the workflow run.
+After each CI run, the report is uploaded as a GitHub Actions artifact.
+
+To view the report:
+1. Open the GitHub Actions run
+2. Download the `playwright-report` artifact
+3. Unzip and open `index.html`
 
 ## CI/CD Pipeline
 

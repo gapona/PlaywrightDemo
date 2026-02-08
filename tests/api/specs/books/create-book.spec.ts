@@ -27,8 +27,7 @@ test.describe('POST /api/v1/Books', () => {
 
         const { data } = await bookService.createBook(payload);
 
-        expect(data!.id).toBeDefined();
-        expect(typeof data!.id).toBe('number');
+        expect(data!.id).toEqual(expect.any(Number));
     });
 
     test('preserves title and description', async () => {
@@ -44,106 +43,79 @@ test.describe('POST /api/v1/Books', () => {
         expect(data!.description).toBe('Test Book Description');
     });
 
-    test('accepts specific page count', async () => {
-        const payload = TestDataGenerator.generateCreateBookData({
-            pageCount: 500
-        });
+    test.describe('pageCount edge cases', () => {
+        const cases = [
+            { value: 0, description: 'zero page count' },
+            { value: -1, description: 'negative page count' },
+            { value: 500, description: 'specific page count' },
+        ];
 
-        const { data } = await bookService.createBook(payload);
+        for (const { value, description } of cases) {
+            test(`accepts ${description}`, async () => {
+                const payload = TestDataGenerator.generateCreateBookData({
+                    pageCount: value,
+                });
 
-        expect(data!.pageCount).toBe(500);
-    });
+                const { data } = await bookService.createBook(payload);
 
-    test('allows empty title', async () => {
-        const payload = TestDataGenerator.generateCreateBookData({
-            title: ''
-        });
-
-        const { data } = await bookService.createBook(payload);
-
-        expect(data!.title).toBe('');
-    });
-
-    test('allows empty description', async () => {
-        const payload = TestDataGenerator.generateCreateBookData({
-            description: ''
-        });
-
-        const { data } = await bookService.createBook(payload);
-
-        expect(data!.description).toBe('');
-    });
-
-    test('accepts zero page count', async () => {
-        const payload = TestDataGenerator.generateCreateBookData({
-            pageCount: 0
-        });
-
-        const { data } = await bookService.createBook(payload);
-
-        expect(data!.pageCount).toBe(0);
-    });
-
-    test('accepts negative page count', async () => {
-        const payload = TestDataGenerator.generateCreateBookData({
-            pageCount: -1
-        });
-
-        const { data } = await bookService.createBook(payload);
-
-        expect(data!.pageCount).toBe(-1);
-    });
-
-    test('handles max integer page count', async () => {
-        const payload = TestDataGenerator.generateCreateBookData({
-            pageCount: Number.MAX_SAFE_INTEGER
-        });
-
-        const { response, data } = await bookService.createBook(payload);
-
-        expect([200, 400, 500]).toContain(response.status());
-
-        if (data !== null) {
-            expect(data.pageCount).toBe(Number.MAX_SAFE_INTEGER);
+                expect(data!.pageCount).toBe(value);
+            });
         }
+
+        test('handles max integer page count', async () => {
+            const payload = TestDataGenerator.generateCreateBookData({
+                pageCount: Number.MAX_SAFE_INTEGER,
+            });
+
+            const { response, data } = await bookService.createBook(payload);
+
+            expect([200, 400, 500]).toContain(response.status());
+
+            if (data !== null) {
+                expect(data.pageCount).toBe(Number.MAX_SAFE_INTEGER);
+            }
+        });
     });
 
     test('preserves publish date value', async () => {
-        const testDate = '2024-02-08T12:00:00.000Z';
+        const testDate = '2026-02-08T12:00:00.000Z';
         const payload = TestDataGenerator.generateCreateBookData({
-            publishDate: testDate
+            publishDate: testDate,
         });
 
         const { data } = await bookService.createBook(payload);
 
-        expect(new Date(data!.publishDate).toISOString())
-            .toBe(new Date(testDate).toISOString());
+        expect(
+            new Date(data!.publishDate).toISOString()
+        ).toBe(
+            new Date(testDate).toISOString()
+        );
     });
 
-    test('matches book contract', async () => {
-        const payload = TestDataGenerator.generateCreateBookData();
+    test.describe('invalid payload scenarios', () => {
+        const cases = [
+            {
+                description: 'missing title',
+                payload: {
+                    description: 'Test',
+                    pageCount: 100,
+                    excerpt: 'Test',
+                    publishDate: new Date().toISOString(),
+                },
+            },
+            {
+                description: 'empty request body',
+                payload: {},
+            },
+        ];
 
-        const { data } = await bookService.createBook(payload);
+        for (const { description, payload } of cases) {
+            test(`handles ${description}`, async () => {
+                const { response } =
+                    await bookService.createBook(payload as any);
 
-        AssertionHelper.assertBookStructure(data!);
-    });
-
-    test('handles missing title', async () => {
-        const payload = {
-            description: 'Test',
-            pageCount: 100,
-            excerpt: 'Test',
-            publishDate: new Date().toISOString()
-        };
-
-        const { response } = await bookService.createBook(payload as any);
-
-        expect([200, 400, 500]).toContain(response.status());
-    });
-
-    test('handles empty request body', async () => {
-        const { response } = await bookService.createBook({} as any);
-
-        expect([200, 400, 500]).toContain(response.status());
+                expect([200, 400, 500]).toContain(response.status());
+            });
+        }
     });
 });

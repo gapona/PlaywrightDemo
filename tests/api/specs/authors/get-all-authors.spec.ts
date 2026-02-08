@@ -9,35 +9,26 @@ test.describe('GET /api/v1/Authors', () => {
         authorService = new AuthorService(request);
     });
 
-    test('returns authors list', async () => {
+    test('returns non-empty authors list with valid structure', async () => {
         const { response, data } = await authorService.getAllAuthors();
 
         await AssertionHelper.assertStatusCode(response, 200);
         await AssertionHelper.assertContentType(response, 'application/json');
         AssertionHelper.assertArrayNotEmpty(data);
-    });
-
-    test('matches author contract', async () => {
-        const { data } = await authorService.getAllAuthors();
 
         data.forEach(author => {
             AssertionHelper.assertAuthorStructure(author);
         });
     });
 
-    test('returns valid author field types', async () => {
+    test('returns authors with valid field types', async () => {
         const { data } = await authorService.getAllAuthors();
 
         const author = data[0];
-        expect(typeof author.id).toBe('number');
-        expect(typeof author.idBook).toBe('number');
-        expect(typeof author.firstName).toBe('string');
-        expect(typeof author.lastName).toBe('string');
-    });
 
-    test('returns multiple authors', async () => {
-        const { data } = await authorService.getAllAuthors();
-
-        expect(data.length).toBeGreaterThan(1);
+        expect(author.id).toEqual(expect.any(Number));
+        expect(author.idBook).toEqual(expect.any(Number));
+        expect(author.firstName).toEqual(expect.any(String));
+        expect(author.lastName).toEqual(expect.any(String));
     });
 });

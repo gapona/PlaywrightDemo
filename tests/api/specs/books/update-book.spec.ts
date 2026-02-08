@@ -4,64 +4,53 @@ import { BookService } from '../../services/book';
 
 test.describe('GET /api/v1/Books/{id}', () => {
     let bookService: BookService;
+    const EXISTING_BOOK_ID = 1;
 
     test.beforeEach(async ({ request }) => {
         bookService = new BookService(request);
     });
 
-    test('returns book by valid id', async () => {
-        const bookId = 1;
-
-        const { response, data } = await bookService.getBookById(bookId);
+    test('returns book by valid id with correct structure', async () => {
+        const { response, data } =
+            await bookService.getBookById(EXISTING_BOOK_ID);
 
         await AssertionHelper.assertStatusCode(response, 200);
         await AssertionHelper.assertContentType(response, 'application/json');
 
         AssertionHelper.assertBookStructure(data!);
-        expect(data!.id).toBe(bookId);
+        expect(data!.id).toBe(EXISTING_BOOK_ID);
     });
 
-    test('matches book contract', async () => {
-        const { data } = await bookService.getBookById(1);
+    test('returns book with valid publishDate format', async () => {
+        const { data } =
+            await bookService.getBookById(EXISTING_BOOK_ID);
 
-        AssertionHelper.assertBookStructure(data!);
-    });
-
-    test('returns valid book field types', async () => {
-        const { data } = await bookService.getBookById(1);
-
-        expect(typeof data!.id).toBe('number');
-        expect(typeof data!.title).toBe('string');
-        expect(typeof data!.description).toBe('string');
-        expect(typeof data!.pageCount).toBe('number');
-        expect(typeof data!.excerpt).toBe('string');
-        expect(typeof data!.publishDate).toBe('string');
-    });
-
-    test('returns book with valid date format', async () => {
-        const { data } = await bookService.getBookById(1);
-
-        const dateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
-        expect(data!.publishDate).toMatch(dateRegex);
+        const isoDateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
+        expect(data!.publishDate).toMatch(isoDateRegex);
     });
 
     test('handles non-existent book id', async () => {
         const nonExistentId = 99999;
 
-        const { response } = await bookService.getBookById(nonExistentId);
+        const { response } =
+            await bookService.getBookById(nonExistentId);
 
         expect([200, 404]).toContain(response.status());
     });
 
-    test('handles zero book id', async () => {
-        const { response } = await bookService.getBookById(0);
+    test.describe('invalid id values', () => {
+        const cases = [
+            { id: 0, description: 'zero id' },
+            { id: -1, description: 'negative id' },
+        ];
 
-        expect([200, 400, 404]).toContain(response.status());
-    });
+        for (const { id, description } of cases) {
+            test(`handles ${description}`, async () => {
+                const { response } =
+                    await bookService.getBookById(id);
 
-    test('handles negative book id', async () => {
-        const { response } = await bookService.getBookById(-1);
-
-        expect([200, 400, 404]).toContain(response.status());
+                expect([200, 400, 404]).toContain(response.status());
+            });
+        }
     });
 });

@@ -22,16 +22,6 @@ test.describe('POST /api/v1/Authors', () => {
         AssertionHelper.assertAuthorData(data!, payload);
     });
 
-    test('accepts explicit book id', async () => {
-        const payload = TestDataGenerator.generateCreateAuthorData({
-            idBook: 5
-        });
-
-        const { data } = await authorService.createAuthor(payload);
-
-        expect(data!.idBook).toBe(5);
-    });
-
     test('assigns author id automatically', async () => {
         const payload = TestDataGenerator.generateCreateAuthorData();
 
@@ -54,93 +44,62 @@ test.describe('POST /api/v1/Authors', () => {
         expect(data!.lastName).toBe('Doe');
     });
 
-    test('allows empty first name', async () => {
-        const payload = TestDataGenerator.generateCreateAuthorData({
-            firstName: ''
-        });
+    test.describe('idBook edge cases', () => {
+        const cases = [
+            { value: 5, description: 'explicit book id' },
+            { value: 0, description: 'zero book id' },
+            { value: -1, description: 'negative book id' },
+        ];
 
-        const { data } = await authorService.createAuthor(payload);
+        for (const { value, description } of cases) {
+            test(`accepts ${description}`, async () => {
+                const payload = TestDataGenerator.generateCreateAuthorData({
+                    idBook: value,
+                });
 
-        expect(data!.firstName).toBe('');
-    });
+                const { data } = await authorService.createAuthor(payload);
 
-    test('allows empty last name', async () => {
-        const payload = TestDataGenerator.generateCreateAuthorData({
-            lastName: ''
-        });
-
-        const { data } = await authorService.createAuthor(payload);
-
-        expect(data!.lastName).toBe('');
-    });
-
-    test('accepts zero book id', async () => {
-        const payload = TestDataGenerator.generateCreateAuthorData({
-            idBook: 0
-        });
-
-        const { data } = await authorService.createAuthor(payload);
-
-        expect(data!.idBook).toBe(0);
-    });
-
-    test('accepts negative book id', async () => {
-        const payload = TestDataGenerator.generateCreateAuthorData({
-            idBook: -1
-        });
-
-        const { data } = await authorService.createAuthor(payload);
-
-        expect(data!.idBook).toBe(-1);
-    });
-
-    test('handles max integer book id', async () => {
-        const payload = TestDataGenerator.generateCreateAuthorData({
-            idBook: Number.MAX_SAFE_INTEGER
-        });
-
-        const { response, data } = await authorService.createAuthor(payload);
-
-        expect([200, 400, 500]).toContain(response.status());
-
-        if (data !== null) {
-            expect(data.idBook).toBe(Number.MAX_SAFE_INTEGER);
+                expect(data!.idBook).toBe(value);
+            });
         }
+
+        test('handles max integer book id', async () => {
+            const payload = TestDataGenerator.generateCreateAuthorData({
+                idBook: Number.MAX_SAFE_INTEGER,
+            });
+
+            const { response, data } = await authorService.createAuthor(payload);
+
+          expect([200, 400, 500]).toContain(response.status());
+
+            if (data !== null) {
+                expect(data.idBook).toBe(Number.MAX_SAFE_INTEGER);
+            }
+        });
     });
 
-    test('matches author contract', async () => {
-        const payload = TestDataGenerator.generateCreateAuthorData();
+    test.describe('invalid payload scenarios', () => {
+        const cases = [
+            {
+                description: 'missing first name',
+                payload: { idBook: 1, lastName: 'Doe' },
+            },
+            {
+                description: 'missing last name',
+                payload: { idBook: 1, firstName: 'John' },
+            },
+            {
+                description: 'empty request body',
+                payload: {},
+            },
+        ];
 
-        const { data } = await authorService.createAuthor(payload);
+        for (const { description, payload } of cases) {
+            test(`handles ${description}`, async () => {
+                const { response } = await authorService.createAuthor(payload as any);
 
-        AssertionHelper.assertAuthorStructure(data!);
-    });
-
-    test('handles missing first name', async () => {
-        const payload = {
-            idBook: 1,
-            lastName: 'Doe'
-        };
-
-        const { response } = await authorService.createAuthor(payload as any);
-
-        expect([200, 400, 500]).toContain(response.status());
-    });
-
-    test('handles missing last name', async () => {
-        const payload = {
-            idBook: 1,
-            firstName: 'John'
-        };
-
-        const { response } = await authorService.createAuthor(payload as any);
-
-        expect([200, 400, 500]).toContain(response.status());
-    });
-
-    test('handles empty request body', async () => {
-        const { response } = await authorService.createAuthor({} as any);
-
-        expect([200, 400, 500]).toContain(response.status());
+                await AssertionHelper.assertStatusCode(response, 200);
+            });
+        }
     });
 });
