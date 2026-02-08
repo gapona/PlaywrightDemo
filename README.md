@@ -14,6 +14,17 @@ approach to API test automation using Playwright Test.
 - Reporting: Playwright HTML Reporter
 - CI/CD: GitHub Actions
 
+## Project Structure
+
+tests/
+├── api/
+│   ├── config     # API configuration and endpoints
+│   ├── helpers    # API client and request helpers
+│   ├── models     # Data models and typings
+│   ├── services   # Service-layer abstractions
+│   ├── specs      # Test specifications
+│   └── utils      # Shared utilities
+
 ## API Coverage
 
 ### Books API
@@ -39,7 +50,7 @@ The framework covers both happy paths and edge cases, including:
 - Boundary and invalid values
 - API-specific behavior of FakeRest mock responses
 
-## 🚀 Available Commands
+## 🚀 Running Tests
 
 | Command           | Description                                             |
 |-------------------|---------------------------------------------------------|
@@ -47,9 +58,25 @@ The framework covers both happy paths and edge cases, including:
 | `test:desktop` | Run tests on all **Desktop browsers** (Chrome)          |
 | `report:open`     | Open Playwright HTML report based on latest test results|
 
-## CI/CD
+## Reporting
+The project uses the built-in Playwright HTML Reporter.
+The report is generated automatically after test execution and provides
+a clear overview of passed and failed test cases.
 
-The project includes a GitHub Actions pipeline that:
-- Installs dependencies
-- Runs API tests
-- Generates a test report as part of the CI process
+In CI, the report is uploaded as a GitHub Actions artifact and can be
+downloaded directly from the workflow run.
+
+## CI/CD Pipeline
+
+The project includes a GitHub Actions pipeline that runs automatically
+on every push and pull request to the main branch.
+
+The pipeline performs the following steps:
+- Installs project dependencies
+- Installs Playwright browsers
+- Executes API tests
+- Generates a Playwright HTML test report
+- Uploads the report as a build artifact
+
+This ensures that test execution and reporting are fully automated
+and reproducible in a CI environment.
