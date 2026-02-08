@@ -4,23 +4,20 @@ import { AssertionHelper } from '../../helpers/assertion';
 
 test.describe('DELETE /api/v1/Authors/{id}', () => {
     let authorService: AuthorService;
+    const EXISTING_AUTHOR_ID = 3;
 
     test.beforeEach(async ({ request }) => {
         authorService = new AuthorService(request);
     });
 
     test('deletes existing author', async () => {
-        const authorId = 3;
-
-        const { response } = await authorService.deleteAuthor(authorId);
+        const { response } = await authorService.deleteAuthor(EXISTING_AUTHOR_ID);
 
         await AssertionHelper.assertStatusCode(response, 200);
     });
 
     test('returns successful response on delete', async () => {
-        const authorId = 3;
-
-        const { response } = await authorService.deleteAuthor(authorId);
+        const { response } = await authorService.deleteAuthor(EXISTING_AUTHOR_ID);
 
         expect(response.ok()).toBeTruthy();
     });
@@ -34,20 +31,19 @@ test.describe('DELETE /api/v1/Authors/{id}', () => {
     });
 
     test('returns content-length header', async () => {
-        const authorId = 3;
-
-        const { response } = await authorService.deleteAuthor(authorId);
+        const { response } = await authorService.deleteAuthor(EXISTING_AUTHOR_ID);
 
         expect(response.headers()).toHaveProperty('content-length');
     });
 
     test('allows delete followed by get request', async () => {
-        const authorId = 3;
+        const { response: deleteResponse } =
+            await authorService.deleteAuthor(EXISTING_AUTHOR_ID);
 
-        const { response: deleteResponse } = await authorService.deleteAuthor(authorId);
         await AssertionHelper.assertStatusCode(deleteResponse, 200);
 
-        const { response: getResponse } = await authorService.getAuthorById(authorId);
+        const { response: getResponse } =
+            await authorService.getAuthorById(EXISTING_AUTHOR_ID);
 
         expect(getResponse.status()).toBeDefined();
     });
