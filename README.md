@@ -59,8 +59,8 @@ The framework covers both happy paths and edge cases, including:
 | Command           | Description                                             |
 |-------------------|---------------------------------------------------------|
 | `npm install` | Install project dependencies          |
-| `test:desktop` | Run tests on all **Desktop browsers** (Chrome)          |
-| `report:open`  | Open Playwright HTML report based on latest test results|
+| `npm run test:desktop` | Run tests on all **Desktop browsers** (Chrome)          |
+| `npm run report:open`  | Open Playwright HTML report based on latest test results|
 
 ## Reporting
 The project uses the built-in Playwright HTML Reporter.
